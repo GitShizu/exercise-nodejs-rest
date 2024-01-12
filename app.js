@@ -5,10 +5,10 @@ import fs from "fs"
 
 const app = express()
 
-// read & write funk
-
+// Funk
 const readResource = (resourceName) => {
-    const data = fs.readFileSync(path.resolve(`./databases/${resourceName}.js`, { encoding: 'utf8' }));
+    const filePath = `./databases/${resourceName}.json`
+    const data = fs.readFileSync(path.resolve(filePath), { encoding: 'utf8' });
     const resource = JSON.parse(data);
     return resource;
 }
@@ -16,14 +16,14 @@ const readResource = (resourceName) => {
 
 const writeResource = (resourceName, newResource) => {
     const data = JSON.stringify(newResource);
-    fs.writeFileSync(path.resolve(`./databases/${resourceName}.js`), data)
+    fs.writeFileSync(path.resolve(`./databases/${resourceName}.json`), data)
 }
 
 const generateId = (resourceName)=>{
     const resource = readResource(resourceName);
     const Ids = resource.map(a => a.id);
     for (let i = 0; i <= Ids.length; i++) {
-        if (Ids.includes(i)) {
+        if (!Ids.includes(i)) {
             return i;
         }
     }
@@ -33,8 +33,8 @@ app.listen(3000, () => {
     console.log('Server listening - port 3000');
 });
 
-app.use(express.json()); //middleware per aggiungere la prop body alla request
-app.use(morgan('dev'));
+app.use(express.json()); //append body to response 
+app.use(morgan('dev'));  //logger
 
 // Read all authors
 app.get('/', (req, res) => {
